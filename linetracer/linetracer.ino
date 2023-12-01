@@ -11,7 +11,8 @@
 #define Side_S A3
 
 float Command = 0;
-char location = 'AAA';
+char Landing_Point = 'AAA';
+int i;
 
 void setup(){ // put your setup code here, to run once
 
@@ -85,13 +86,19 @@ void Get_QR_Code_location(String location) {
     Command = 100;
   }
 
-  if(location == 'BBB') {
+  else if(location == 'BBB') {
     Command = 200;
   }
 }
 
-void landing() {
-
+void landing(String location) {
+  if(location == 'AAA') {
+    Command = 100;
+  }
+  
+  else if(location == 'BBB') {
+    Command = 200;
+  }
 }
 
 
@@ -105,18 +112,17 @@ void loop(){
   if(Command == 2){turnLeft();}  //if Right Sensor is White and Left Sensor is Black then it will call turn Left function
 
   if(Command == 3){
-    while() {
+
       Stop();
-      if (Get_QR_Code_location())
-      {
-        break;
+      if(i==0) {
+        Get_QR_Code_location(Landing_Point);
+        i++;
       }
 
-      else if (landing())
-      {
-        break;
+      else if(i==1) {
+        landing(Landing_Point);
+        i=0
       }
-    }
   } 
 
   if(Command == 100){ //좌회전 하는 코드
@@ -130,6 +136,4 @@ void loop(){
     delay(2000);
     forward();
   }
-
- 
 }
