@@ -14,7 +14,7 @@ float Command = 0;
 char Landing_Point = 'AAA';
 
 int i=0;
-
+int tempCommand;
 void setup(){ // put your setup code here, to run once
 
   pinMode(R_S, INPUT); // declare if sensor as input  
@@ -113,40 +113,47 @@ void loop(){
   if(Command == 3){turnLeft();}  //if Right Sensor is White and Left Sensor is Black then it will call turn Left function
 
   if(Command == 4){
+    Stop();
 
-      Stop();
-      if(i==0) {
-        Get_QR_Code_Landing_Point();
+    if(i==0) {
+      Get_QR_Code_Landing_Point();
+      tempCommand = Command;  // Save the command value
 
-        if(Command == 100){ //좌회전 하는 코드
-          turnLeft();
-          delay(2000);
-          forword();    
-        }
-
-        else if(Command == 200){ //우회전 하는 코드
-          turnRight();
-          delay(2000);
-          forword();
-        }
-        i++;
+      if(tempCommand == 100){ //우회전 하는 코드
+        turnRight();
+        delay(2000);
+        forword();
+        delay(100); 
       }
 
-      else if(i==1) {
-        landing();
-
-        if(Command == 100){ //좌회전 하는 코드
-          turnLeft();
-          delay(2000);
-          forword();    
-        }
-
-        if(Command == 200){ //우회전 하는 코드
-          turnRight();
-          delay(2000);
-          forword();
-        }
-        i=0;
+      else if(tempCommand == 200){ //좌회전 하는 코드
+        turnLeft();
+        delay(2000);
+        forword();
+        delay(100);
       }
-  } 
+      i++;
+      read_sensor_values();
+    }
+
+    else if(i==1) {
+      landing();
+
+      if(tempCommand == 100){ //우회전 하는 코드
+        turnRight();
+        delay(2000);
+        forword(); 
+        delay(100);
+      }
+
+      else if(tempCommand == 200){ //좌회전 하는 코드
+        turnLeft();
+        delay(2000);
+        forword();
+        delay(100);
+      }
+      i=0;
+      read_sensor_values();
+    }
+  }
 }
