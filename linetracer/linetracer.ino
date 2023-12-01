@@ -12,7 +12,8 @@
 
 float Command = 0;
 char Landing_Point = 'AAA';
-int i;
+
+int i=0;
 
 void setup(){ // put your setup code here, to run once
 
@@ -81,22 +82,22 @@ void read_sensor_values()
 }
 
 
-void Get_QR_Code_location(String location) {
-  if(location == 'AAA') {
+void Get_QR_Code_Landing_Point() {
+  if(Landing_Point == 'AAA') {
     Command = 100;
   }
 
-  else if(location == 'BBB') {
+  else if(Landing_Point == 'BBB') {
     Command = 200;
   }
 }
 
-void landing(String location) {
-  if(location == 'AAA') {
+void landing() {
+  if(Landing_Point == 'AAA') {
     Command = 100;
   }
   
-  else if(location == 'BBB') {
+  else if(Landing_Point == 'BBB') {
     Command = 200;
   }
 }
@@ -105,35 +106,47 @@ void landing(String location) {
 void loop(){  
   read_sensor_values();
 
-  if(Command == 0){forword();}   //if Right Sensor and Left Sensor are at White color then it will call forword function
+  if(Command == 1){forword();}   //if Right Sensor and Left Sensor are at White color then it will call forword function
 
-  if(Command == 1){turnRight();} //if Right Sensor is Black and Left Sensor is White then it will call turn Right function  
+  if(Command == 2){turnRight();} //if Right Sensor is Black and Left Sensor is White then it will call turn Right function  
 
-  if(Command == 2){turnLeft();}  //if Right Sensor is White and Left Sensor is Black then it will call turn Left function
+  if(Command == 3){turnLeft();}  //if Right Sensor is White and Left Sensor is Black then it will call turn Left function
 
-  if(Command == 3){
+  if(Command == 4){
 
       Stop();
       if(i==0) {
-        Get_QR_Code_location(Landing_Point);
+        Get_QR_Code_Landing_Point();
+
+        if(Command == 100){ //좌회전 하는 코드
+          turnLeft();
+          delay(2000);
+          forword();    
+        }
+
+        else if(Command == 200){ //우회전 하는 코드
+          turnRight();
+          delay(2000);
+          forword();
+        }
         i++;
       }
 
       else if(i==1) {
-        landing(Landing_Point);
-        i=0
+        landing();
+
+        if(Command == 100){ //좌회전 하는 코드
+          turnLeft();
+          delay(2000);
+          forword();    
+        }
+
+        if(Command == 200){ //우회전 하는 코드
+          turnRight();
+          delay(2000);
+          forword();
+        }
+        i=0;
       }
   } 
-
-  if(Command == 100){ //좌회전 하는 코드
-    turnLeft();
-    delay(2000);
-    forward();    
-  }
-
-  if(Command == 200){ //우회전 하는 코드
-    turnRight();
-    delay(2000);
-    forward();
-  }
 }
