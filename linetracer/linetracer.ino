@@ -11,10 +11,10 @@
 #define Side_S A3
 
 float Command = 0;
-char Landing_Point = 'AAA';
+int Landing_Point = 9999;
 
 int i=0;
-int tempCommand;
+int tempCommand = 0;
 void setup(){ // put your setup code here, to run once
 
   pinMode(R_S, INPUT); // declare if sensor as input  
@@ -82,29 +82,29 @@ void read_sensor_values()
 
 
 void Get_QR_Code_Landing_Point() {
-  if(Landing_Point == 'AAA') {
+  if(Landing_Point == 9999) {
     Command = 100;
   }
 
-  else if(Landing_Point == 'BBB') {
+  else if(Landing_Point == 9999) {
     Command = 200;
   }
 }
 
 void landing() {
   if(Landing_Point == 'AAA') {
-    Command = 100;
+    tempCommand = 100;
   }
   
   else if(Landing_Point == 'BBB') {
-    Command = 200;
+    tempCommand = 200;
   }
 }
 
 
 void loop(){  
   read_sensor_values();
-
+  
   if(Command == 1){forword();}   //if Right Sensor and Left Sensor are at White color then it will call forword function
 
   if(Command == 2){turnRight();} //if Right Sensor is Black and Left Sensor is White then it will call turn Right function  
@@ -116,7 +116,7 @@ void loop(){
 
     if(i==0) {
       Get_QR_Code_Landing_Point();
-      tempCommand = Command;  // Save the command value
+      
 
       if(tempCommand == 100){ //우회전 하는 코드
         turnRight();
