@@ -29,9 +29,8 @@ void setup(){ // put your setup code here, to run once
   pinMode(in4, OUTPUT); // declare as output for L298 Pin in4 
   pinMode(enB, OUTPUT); // declare as output for L298 Pin enB 
 
-  analogWrite(enA, 100); // 모터 세기 조절
-  analogWrite(enB, 100); // 모터 세기 조절
-  delay(1000);
+  analogWrite(enA, 140); // 모터 세기 조절
+  analogWrite(enB, 140); // 모터 세기 조절
 }
 
 void forword(){  //forword
@@ -131,9 +130,10 @@ void loop(){
         delay(2000);
         forword();
         delay(100);
-      }
+      }  
       i++;
       read_sensor_values();
+      return;
     }
 
     else if(i==1) {
@@ -154,6 +154,7 @@ void loop(){
       }
       i=0;
       read_sensor_values();
+      return;
     }
   }
 }
