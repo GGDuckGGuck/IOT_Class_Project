@@ -1,3 +1,4 @@
+#include <SoftwareSerial.h>
 #include <WiFiEsp.h>
 #include <stdio.h>
 
@@ -14,8 +15,8 @@ int reqCount = 0;
 WiFiEspServer server(80);
 
 void setup(){
-  Serial.begin(115200); // GM65를 위한 하드웨어 시리얼
-  Serial1.begin(115200); // WiFi를 위한 소프트웨어 시리얼
+  Serial.begin(9600); // GM65를 위한 하드웨어 시리얼
+  Serial1.begin(9600); // WiFi를 위한 소프트웨어 시리얼
   Serial1.listen();
   WiFi.init(&Serial1);
 
@@ -44,45 +45,32 @@ void loop(){
         char c = client.read();
         Serial.write(c);
 
-        if (c == '
-' && currentLineIsBlank) {
+        if (c == '\n' && currentLineIsBlank) {
           Serial.println("Sending response");
           client.print(
-            "HTTP/1.1 200 OK\r
-"
-            "Content-Type: text/html\r
-"
-            "Connection: close\r
-"  
-            "Refresh: 20\r
-"
-            "\r
-");
-          client.print("<!DOCTYPE HTML>\r
-");
-          client.print("<html>\r
-");
-          client.print("<h1>Hello World!</h1>\r
-");
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "Connection: close\r\n"
+            "Refresh: 20\r\n"
+            "\r\n");
+          client.print("<!DOCTYPE HTML>\r\n");
+          client.print("<html>\r\n");
+          client.print("<h1>Hello World!</h1>\r\n");
           client.print("Requests received: ");
           client.print(++reqCount);
-          client.print("<br>\r
-");
+          client.print("<br>\r\n");
           client.print("barcode ");
           String barcode = scanBarcode();
           client.print(barcode);
-          client.print("<br>\r
-");
-          client.print("</html>\r
-");
+          client.print("<br>\r\n");
+          client.print("</html>\r\n");
           break;
         }
 
-        if (c == '
-') {
+        if (c == '\n') {
           currentLineIsBlank = true;
         }
-        else if (c != '\r') {
+        else if (c != '\n') {
           currentLineIsBlank = false;
         }
       }
@@ -108,8 +96,7 @@ void printWifiStatus(){
 String scanBarcode() {
   String barcode = "";  
   if(Serial.available()){
-    barcode = Serial.readStringUntil('
-');
+    barcode = Serial.readStringUntil('\n');
     Serial.println(barcode);
   }
   return barcode; 
