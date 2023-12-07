@@ -4,22 +4,24 @@
 #include <stdio.h>
 #endif
 
-SoftwareSerial GM65(2,3);
-SoftwareSerial Serial1(13,12);
+#include <WiFiEsp.h>
+
+SoftwareSerial GM65(2,3); // GM65는 소프트웨어 시리얼을 계속 사용
 
 //wifi 정보
-const char ssid[] = "IoT";
-const char pass[] = "qwer1234";
+// const char ssid[] = "IoT";
+// const char pass[] = "qwer1234";
+const char ssid[] = "KT_GIGA_2G_Wave2_BDB2";
+const char pass[] = "bf4edc0603";
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 int reqCount = 0;                // number of requests received
 
 WiFiEspServer server(80);
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(9600); // ESP 모듈은 하드웨어 시리얼을 사용
   GM65.begin(9600);
-  Serial1.begin(9600);
-  WiFi.init(&Serial1);
+  WiFi.init(&Serial); // ESP 모듈이 연결된 시리얼 포트로 초기화
 
   if (WiFi.status() == WL_NO_SHIELD) {
     Serial.println("WiFi shield not present");
@@ -93,7 +95,7 @@ void printWifiStatus(){
   Serial.println();
 }
 
-Strin scanBarcode() {
+String scanBarcode() {
   if(GM65.available()){
     String barcode = GM65.readStringUntil('\n');
     Serial.println(barcode);
