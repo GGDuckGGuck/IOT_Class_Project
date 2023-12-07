@@ -1,3 +1,10 @@
+#include <SoftwareSerial.h>
+#ifndef HAVE_HWSERIAL1
+#include <WiFiEsp.h>
+#include <stdio.h>
+#endif
+
+
 #define enA 10//Enable1 L298 Pin enA 
 #define in1 9 // 전진
 #define in2 8 // 후진 
@@ -10,12 +17,44 @@
 
 #define Side_S A3
 
+SoftwareSerial GM65(2,3);
+SoftwareSerial Serial1(12,13);
+
+const char ssid[] = "U+Net5DD8";
+const char pass[] = "2DD#438P17";
+int status = WL_IDLE_STATUS;     // the Wifi radio's status
+int reqCount = 0;                // number of requests received
+
+WiFiEspServer server(80);
+
 int Command = 0;
 int Landing_Point = 9999;
 
 int i=0;
 int tempCommand = 0;
+
+
 void setup(){ // put your setup code here, to run once
+  Serial.begin(9600);
+  GM65.begin(9600);
+  Serial1.begin(9600);
+  WiFi.init(&Serial1);
+
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present");
+    // don't continue
+    while (true);
+  }
+
+  while ( status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to WPA SSID: ");
+    Serial.println(ssid);
+    status = WiFi.begin(ssid, pass);
+  }
+  Serial.println("You're connected to the network");
+  printWifiStatus();
+  server.begin();
+
 
   pinMode(R_S, INPUT); // declare if sensor as input  
   pinMode(L_S, INPUT); // declare ir sensor as input
@@ -34,45 +73,45 @@ void setup(){ // put your setup code here, to run once
 }
 
 void forword(){  //forword
-digitalWrite(in1, HIGH); //Right Motor forword Pin 
-digitalWrite(in2, LOW);  //Right Motor backword Pin 
-digitalWrite(in3, LOW);  //Left Motor backword Pin 
-digitalWrite(in4, HIGH); //Left Motor forword Pin 
+  digitalWrite(in1, HIGH); //Right Motor forword Pin 
+  digitalWrite(in2, LOW);  //Right Motor backword Pin 
+  digitalWrite(in3, LOW);  //Left Motor backword Pin 
+  digitalWrite(in4, HIGH); //Left Motor forword Pin 
 }
 
 void turnRight(){ //turnRight
-digitalWrite(in1, LOW);  //Right Motor forword Pin 
-digitalWrite(in2, HIGH); //Right Motor backword Pin  
-digitalWrite(in3, LOW);  //Left Motor backword Pin 
-digitalWrite(in4, HIGH); //Left Motor forword Pin 
+  digitalWrite(in1, LOW);  //Right Motor forword Pin 
+  digitalWrite(in2, HIGH); //Right Motor backword Pin  
+  digitalWrite(in3, LOW);  //Left Motor backword Pin 
+  digitalWrite(in4, HIGH); //Left Motor forword Pin 
 }
 
 void right_angle(){ //turnRight
-digitalWrite(in1, LOW);  //Right Motor forword Pin 
-digitalWrite(in2, LOW); //Right Motor backword Pin  
-digitalWrite(in3, LOW);  //Left Motor backword Pin 
-digitalWrite(in4, HIGH); //Left Motor forword Pin 
+  digitalWrite(in1, LOW);  //Right Motor forword Pin 
+  digitalWrite(in2, LOW); //Right Motor backword Pin  
+  digitalWrite(in3, LOW);  //Left Motor backword Pin 
+  digitalWrite(in4, HIGH); //Left Motor forword Pin 
 }
 
 void turnLeft(){ //turnLeft
-digitalWrite(in1, HIGH); //Right Motor forword Pin 
-digitalWrite(in2, LOW);  //Right Motor backword Pin 
-digitalWrite(in3, HIGH); //Left Motor backword Pin 
-digitalWrite(in4, LOW);  //Left Motor forword Pin 
+  digitalWrite(in1, HIGH); //Right Motor forword Pin 
+  digitalWrite(in2, LOW);  //Right Motor backword Pin 
+  digitalWrite(in3, HIGH); //Left Motor backword Pin 
+  digitalWrite(in4, LOW);  //Left Motor forword Pin 
 }
 
 void left_angle(){ //turnLeft
-digitalWrite(in1, HIGH); //Right Motor forword Pin 
-digitalWrite(in2, LOW);  //Right Motor backword Pin 
-digitalWrite(in3, LOW); //Left Motor backword Pin 
-digitalWrite(in4, LOW);  //Left Motor forword Pin 
+  digitalWrite(in1, HIGH); //Right Motor forword Pin 
+  digitalWrite(in2, LOW);  //Right Motor backword Pin 
+  digitalWrite(in3, LOW); //Left Motor backword Pin 
+  digitalWrite(in4, LOW);  //Left Motor forword Pin 
 }
 
 void Stop(){ //stop
-digitalWrite(in1, LOW); //Right Motor forword Pin 
-digitalWrite(in2, LOW); //Right Motor backword Pin 
-digitalWrite(in3, LOW); //Left Motor backword Pin 
-digitalWrite(in4, LOW); //Left Motor forword Pin 
+  digitalWrite(in1, LOW); //Right Motor forword Pin 
+  digitalWrite(in2, LOW); //Right Motor backword Pin 
+  digitalWrite(in3, LOW); //Left Motor backword Pin 
+  digitalWrite(in4, LOW); //Left Motor forword Pin 
 }
 
 void read_sensor_values()
@@ -98,25 +137,26 @@ void read_sensor_values()
   }
 }
 
+void scanBarcod() {
+  if(GM65.available()){
+    String barcode = GM65.readStringUntil('\n');
+    Serial.println(barcode);
+    return barcode;
+  }
+}
 
 void Get_QR_Code_Landing_Point() {
-  if(Landing_Point == 9999) {
+  if(scanBarcode() == 100) {
     tempCommand = 100;
   }
 
-  else if(Landing_Point == 9999) {
+  else if(scanBarcode() == 200) {
     tempCommand = 200;
   }
 }
 
 void landing() {
-  if(Landing_Point == 'AAA') {
-    tempCommand = 100;
-  }
-  
-  else if(Landing_Point == 'BBB') {
-    tempCommand = 200;
-  }
+  //부저음 울리기
 }
 
 void turn_ninty() {
