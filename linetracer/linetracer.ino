@@ -17,11 +17,6 @@
 
 #define Side_S A3
 
-SoftwareSerial GM65(2,3);
-SoftwareSerial Serial1(12,13);
-
-const char ssid[] = "U+Net5DD8";
-const char pass[] = "2DD#438P17";
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 int reqCount = 0;                // number of requests received
 
@@ -36,24 +31,7 @@ int tempCommand = 0;
 
 void setup(){ // put your setup code here, to run once
   Serial.begin(9600);
-  GM65.begin(9600);
-  Serial1.begin(9600);
-  WiFi.init(&Serial1);
-
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    // don't continue
-    while (true);
-  }
-
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-    status = WiFi.begin(ssid, pass);
-  }
-  Serial.println("You're connected to the network");
-  printWifiStatus();
-  server.begin();
+ 
 
 
   pinMode(R_S, INPUT); // declare if sensor as input  
@@ -137,20 +115,13 @@ void read_sensor_values()
   }
 }
 
-void scanBarcod() {
-  if(GM65.available()){
-    String barcode = GM65.readStringUntil('\n');
-    Serial.println(barcode);
-    return barcode;
-  }
-}
 
 void Get_QR_Code_Landing_Point() {
-  if(scanBarcode() == 100) {
+  if(Landing_Point == 9999) {
     tempCommand = 100;
   }
 
-  else if(scanBarcode() == 200) {
+  else if(Landing_Point == 8888) {
     tempCommand = 200;
   }
 }
