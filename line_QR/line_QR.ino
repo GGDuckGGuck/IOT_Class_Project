@@ -17,24 +17,24 @@ SoftwareSerial GM65(2,3); // GM65는 소프트웨어 시리얼을 계속 사용
 int Command = 0;
 int i=0;
 int tempCommand = 0;
-
+String barcode = "";
 
 void setup(){ // put your setup code here, to run once
   Serial.begin(9600);
- 
+  GM65.begin(9600);
 
 
-  pinMode(R_S, INPUT); // declare if sensor as input  
-  pinMode(L_S, INPUT); // declare ir sensor as input
-  pinMode(Side_S, INPUT); // declare if sensor as input  
+  pinMode(R_S, INPUT); 
+  pinMode(L_S, INPUT); 
+  pinMode(Side_S, INPUT);
 
 
-  pinMode(enA, OUTPUT); // declare as output for L298 Pin enA 
-  pinMode(in1, OUTPUT); // declare as output for L298 Pin in1 
-  pinMode(in2, OUTPUT); // declare as output for L298 Pin in2 
-  pinMode(in3, OUTPUT); // declare as output for L298 Pin in3   
-  pinMode(in4, OUTPUT); // declare as output for L298 Pin in4 
-  pinMode(enB, OUTPUT); // declare as output for L298 Pin enB 
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+  pinMode(enB, OUTPUT);
 
   analogWrite(enA, 200); // 모터 세기 조절
   analogWrite(enB, 200); // 모터 세기 조절
@@ -48,38 +48,38 @@ void forword(){  //forword
 }
 
 void turnRight(){ //turnRight
-  digitalWrite(in1, LOW);  //Right Motor forword Pin 
-  digitalWrite(in2, HIGH); //Right Motor backword Pin  
-  digitalWrite(in3, LOW);  //Left Motor backword Pin 
-  digitalWrite(in4, HIGH); //Left Motor forword Pin 
+  digitalWrite(in1, LOW); 
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
 }
 
 void right_angle(){ //turnRight
-  digitalWrite(in1, LOW);  //Right Motor forword Pin 
-  digitalWrite(in2, LOW); //Right Motor backword Pin  
-  digitalWrite(in3, LOW);  //Left Motor backword Pin 
-  digitalWrite(in4, HIGH); //Left Motor forword Pin 
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
 }
 
 void turnLeft(){ //turnLeft
-  digitalWrite(in1, HIGH); //Right Motor forword Pin 
-  digitalWrite(in2, LOW);  //Right Motor backword Pin 
-  digitalWrite(in3, HIGH); //Left Motor backword Pin 
-  digitalWrite(in4, LOW);  //Left Motor forword Pin 
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
 }
 
 void left_angle(){ //turnLeft
-  digitalWrite(in1, HIGH); //Right Motor forword Pin 
-  digitalWrite(in2, LOW);  //Right Motor backword Pin 
-  digitalWrite(in3, LOW); //Left Motor backword Pin 
-  digitalWrite(in4, LOW);  //Left Motor forword Pin 
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW); 
 }
 
 void Stop(){ //stop
-  digitalWrite(in1, LOW); //Right Motor forword Pin 
-  digitalWrite(in2, LOW); //Right Motor backword Pin 
-  digitalWrite(in3, LOW); //Left Motor backword Pin 
-  digitalWrite(in4, LOW); //Left Motor forword Pin 
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
 }
 
 void read_sensor_values()
@@ -105,36 +105,48 @@ void read_sensor_values()
   }
 }
 
-String scanBarcode() {
-  if(GM65.available()){
-    String barcode = GM65.readStringUntil('\n');
-    Serial.println("not");
-    Serial.println(barcode);
-    return barcode;
-  }
+void scanBarcode() {
+  Serial.println("scanBarcode");
+
+  while (barcode == "") {    
+    while (GM65.available()) {
+        String barcode_Data = GM65.readStringUntil('\n');
+        Serial.print("read : ");
+        Serial.println(barcode_Data);
+        barcode_Data.trim();  // trim 함수를 수정하였습니다.
+        barcode = barcode_Data;
+        Serial.print("barcode value is now: ");
+        Serial.println(barcode);
+        Serial.print("barcode length is: ");
+        Serial.println(barcode.length());
+    }
+
+
+  }  
 }
 
+
 void Get_QR_Code_Landing_Point() {
-  String barcode = "";
-  
-  // Keep scanning until a barcode is detected
-  while (barcode == "") {
-    barcode = scanBarcode();
-    delay(200);
-    Serial.println("1");
-    Serial.println(barcode);
-  }
+
+  scanBarcode();  
+  Serial.println(barcode);
 
   // Check the barcode value and set tempCommand accordingly
   if(barcode == "9999") {
-    Serial.println(barcode);
-    tempCommand = 100;
+      Serial.println(barcode);
+      Serial.println("Success");
+      tempCommand = 100;
+      barcode = "";
   }
   else if(barcode == "8888") {
-    Serial.println(barcode);
-    tempCommand = 200;
+      Serial.println(barcode);
+      tempCommand = 200;
+      barcode = "";
   }
-
+  else {
+    Serial.println("fail");
+    barcode = "";
+  }
 }
 
 void landing() {
@@ -144,9 +156,13 @@ void landing() {
 void turn_ninty() {
   if(i==0) {
       Get_QR_Code_Landing_Point();
+
+      Serial.println(tempCommand);
       
 
       if(tempCommand == 100){ //우회전 하는 코드
+
+        Serial.println("tempCommand");
         right_angle();
         delay(2000);
         forword();
@@ -193,20 +209,19 @@ void loop(){
   if(Command == 1){
     forword();
     Serial.println("command1");
-    }   //if Right Sensor and Left Sensor are at White color then it will call forword function
-
+    }
   if(Command == 2){
     turnRight();
     Serial.println("command2");
-    } //if Right Sensor is Black and Left Sensor is White then it will call turn Right function  
+    } 
 
   if(Command == 3){
     turnLeft();
     Serial.println("command3");
-    }  //if Right Sensor is White and Left Sensor is Black then it will call turn Left function
+    }
 
   if(Command == 4){
-      Serial.println("command5");
+      Serial.println("command4");
       Stop();
       turn_ninty();
     }
