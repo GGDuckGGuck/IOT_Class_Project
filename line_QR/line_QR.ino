@@ -120,31 +120,24 @@ void scanBarcode() {
         Serial.print("barcode length is: ");
         Serial.println(barcode.length());
     }
-
-
   }  
 }
 
 
 void Get_QR_Code_Landing_Point() {
 
-  scanBarcode();  
-  Serial.println(barcode);
+  scanBarcode();
 
   // Check the barcode value and set tempCommand accordingly
   if(barcode == "9999") {
-      Serial.println(barcode);
-      Serial.println("Success");
       tempCommand = 100;
       barcode = "";
   }
   else if(barcode == "8888") {
-      Serial.println(barcode);
       tempCommand = 200;
       barcode = "";
   }
   else {
-    Serial.println("fail");
     barcode = "";
   }
 }
@@ -157,12 +150,7 @@ void turn_ninty() {
   if(i==0) {
       Get_QR_Code_Landing_Point();
 
-      Serial.println(tempCommand);
-      
-
       if(tempCommand == 100){ //우회전 하는 코드
-
-        Serial.println("tempCommand");
         right_angle();
         delay(2000);
         forword();
@@ -175,6 +163,7 @@ void turn_ninty() {
         forword();
         delay(100);
       }  
+      
       i++;
       read_sensor_values();
       return;
