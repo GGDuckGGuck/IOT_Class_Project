@@ -84,7 +84,11 @@ void Stop(){ //stop
 
 void read_sensor_values()
 {
-  if((digitalRead(R_S) == 0)&&(digitalRead(L_S) == 0)) {
+  if(digitalRead(Side_S) == 1) {
+    Command = 5; //STOP
+  }
+  
+  else if((digitalRead(R_S) == 0)&&(digitalRead(L_S) == 0)) {
     Command = 1;  // 전진
   }
 
@@ -100,9 +104,6 @@ void read_sensor_values()
     Command = 4;  // 전진
   }
 
-  else if((digitalRead(R_S) == 1)&&(digitalRead(L_S) == 1)&&(digitalRead(Side_S) == 1)) {
-    Command = 5; //STOP
-  }
 }
 
 void scanBarcode() {
@@ -163,7 +164,7 @@ void turn_ninty() {
         forword();
         delay(100);
       }  
-      
+
       i++;
       read_sensor_values();
       return;
@@ -210,6 +211,11 @@ void loop(){
     }
 
   if(Command == 4){
+    Stop();
+    Serial.println("command4");
+    }
+
+  if(Command == 5){
       Serial.println("command4");
       Stop();
       turn_ninty();
