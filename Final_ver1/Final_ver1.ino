@@ -13,7 +13,7 @@ SoftwareSerial GM65(2,3); // GM65는 소프트웨어 시리얼을 계속 사용
 #define L_S A1 //ir sensor Left
 #define Side_S A3
 
-#define piezo 11
+#define piezo 4  // 수동부저
 
 #define trigPin 12 // 초음파 센서의 Trig 핀
 #define echoPin 11 // 초음파 센서의 Echo 핀
@@ -141,6 +141,9 @@ void send_HW_Serial() {
   Serial.write(barcode_char);
   Serial.flush();
 
+  Serial.print("HW_Serial: ");
+  Serial.print(barcode_char);
+
 }
 
 
@@ -175,14 +178,14 @@ void turn_Corner() {
 
       if(tempCommand == 100){ //우회전 하는 코드
         right_angle();
-        delay(1500);
+        delay(1700);
         forword();
         delay(100); 
       }
 
       else if(tempCommand == 200){ //좌회전 하는 코드
         left_angle();
-        delay(2000);
+        delay(1700);
         forword();
         delay(100);
       }  
