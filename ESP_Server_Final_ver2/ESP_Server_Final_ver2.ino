@@ -5,7 +5,9 @@
 SoftwareSerial ESP(2, 3); // RX, TX
 #endif
 #include <stdio.h>
+
 char data; // 데이터를 저장할 char 타입 변수 선언
+char databox;
 
 const char ssid[] = "KT_GiGA_2G_Wave2_BDB2"; // 연결할 WiFi SSID
 const char pass[] = "bf4edc0603"; // 연결할 WiFi Password
@@ -50,8 +52,16 @@ void loop() {
     if(Serial.available()) {
       data = Serial.read();
 
+      if(data == "a") {
+        databox = data;
+      }
+
+      else if(data == "b") {
+        databox = data;
+      }
+
       Serial.print("Data_Print: ");
-      Serial.println(data); // 읽은 데이터 출력
+      Serial.println(databox); // 읽은 데이터 출력
     }
     
     while (client.connected()) { // 클라이언트가 연결된 동안
@@ -80,7 +90,7 @@ void loop() {
           client.print("<br>\r\n");
           client.print("Received data: ");
           client.print("<br>\r\n");
-          client.println(data);  // 시리얼에서 읽은 데이터를 웹 페이지에 출력합니다.
+          client.println(databox);  // 시리얼에서 읽은 데이터를 웹 페이지에 출력합니다.
 
           client.print("-------------------------------");
           client.print("<br>\r\n");
