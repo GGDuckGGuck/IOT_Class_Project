@@ -113,7 +113,7 @@ void read_sensor_values()
   }
 
   else if((digitalRead(R_S) == 1)&&(digitalRead(L_S) == 1)) {
-    Command = 4;  // 전진
+    Command = 4;  // STOP
   }
 
 }
@@ -130,7 +130,6 @@ void scanBarcode() {
         barcode = barcode_Data;
 
         send_HW_Serial();
-
     }
   }  
 }
@@ -173,8 +172,7 @@ void landing() {
 }
 
 void turn_Corner() {
-  if(i==0) {
-      Get_QR_Code_Landing_Point();
+  if(i==0) {      
 
       if(tempCommand == 100){ //우회전 하는 코드
         right_angle();
@@ -257,6 +255,7 @@ void loop(){
   if(Command == 5){
       Serial.println("command5");
       Stop();
+      Get_QR_Code_Landing_Point();
       turn_Corner();
     }
 }
