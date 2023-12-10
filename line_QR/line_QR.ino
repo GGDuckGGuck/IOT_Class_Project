@@ -140,15 +140,12 @@ void Get_QR_Code_Landing_Point() {
   // Check the barcode value and set tempCommand accordingly
   if(barcode == "a") {
       tempCommand = 100;
-      barcode = "";
+      
   }
   else if(barcode == "b") {
       tempCommand = 200;
-      barcode = "";
-  }
-  else {
-    barcode = "";
-  }
+      
+  }  
 }
 
 //부저음 울리기
@@ -218,6 +215,7 @@ void loop(){
 
   if(Command == 4){
     Stop();
+    barcode = "";
     Serial.println("command4");
     }
 
