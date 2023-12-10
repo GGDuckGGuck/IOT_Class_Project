@@ -11,12 +11,15 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("scann:");
 
   if(GM65_BarcodeReader.available()){
 
-  String barcode_Data = GM65_BarcodeReader.readStringUntil('\n');
+    String barcode_Data = GM65_BarcodeReader.readStringUntil('\n');
 
-  Serial.println(barcode_Data);
+    Serial.println(barcode_Data);
+
+    delay(2000);
 
   }
 }

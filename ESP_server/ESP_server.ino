@@ -3,53 +3,32 @@
 #include "SoftwareSerial.h"
 SoftwareSerial ESP(2, 3); // RX, TX
 #endif
-
+#include <stdio.h>
 char data;
 
-const char ssid[] = "KT_GiGA_2G_Wave2_BDB2";
-const char pass[] = "bf4edc0603";
+const char ssid[] = "U+Net5DD8";
+const char pass[] = "2DD#438P17";
 int status = WL_IDLE_STATUS;
 int reqCount = 0;
 
 WiFiEspServer server(80);
 
 void setup(){
-
-  // initialize serial for debugging
   Serial.begin(9600);
-  // initialize serial for ESP module
   ESP.begin(9600);
-  // initialize ESP module
   WiFi.init(&ESP);
-
-  // check for the presence of the shield
   if (WiFi.status() == WL_NO_SHIELD) {
-
     Serial.println("WiFi shield not present");
-
-    // don't continue
     while (true);
   }
-
-
-  // attempt to connect to WiFi network
   while ( status != WL_CONNECTED) {
-
     Serial.print("Attempting to connect to WPA SSID: ");
     Serial.println(ssid);
-
-    // Connect to WPA/WPA2 network
     status = WiFi.begin(ssid, pass);
-
   }
-
-
   Serial.println("You're connected to the network");
   printWifiStatus();
-  // start the web server on port 80
-
   server.begin();
-
 }
 
 
@@ -65,11 +44,9 @@ void loop() {
     // 하드웨어 시리얼에서 데이터를 읽어 `char data`에 저장
     if(Serial.available()) {
       data = Serial.read();
-
       Serial.print("Data_Print: ");
       Serial.println(data);
     }
-    
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
@@ -81,17 +58,22 @@ void loop() {
             "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/html\r\n"
             "Connection: close\r\n"
-            "Refresh: 20\r\n"
             "\r\n");
           client.print("<!DOCTYPE HTML>\r\n");
           client.print("<html>\r\n");
           client.print("<h1>Hello World!</h1>\r\n");
-          client.print("Requests received: ");
-          client.print(++reqCount);
           client.print("<br>\r\n");
           client.print("Received data: ");
           client.print(data);  // 시리얼에서 읽은 데이터를 웹 페이지에 출력합니다.
-          client.print("<br>\r\n");
+          client.print("-------------------------------");
+          client.print("컨테이너: a");
+          client.print("내용물: a");
+          client.print("위치: 오른쪽");
+          client.print("컨테이너: b");
+          client.print("내용물: b");
+          client.print("위치: 왼쪽");
+          client.print("-------------------------------");
+          client.print("<br>\r\n");                
           client.print("</html>\r\n");
           break;
         }

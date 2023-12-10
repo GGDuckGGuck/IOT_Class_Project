@@ -11,8 +11,9 @@ SoftwareSerial GM65(2,3); // GM65는 소프트웨어 시리얼을 계속 사용
 
 #define R_S A0 //ir sensor Right
 #define L_S A1 //ir sensor Left
-
 #define Side_S A3
+
+#define piezo 11
 
 int Command = 0;
 int i=0;
@@ -116,12 +117,19 @@ void scanBarcode() {
         Serial.println(barcode_Data);
         barcode_Data.trim();  // trim 함수를 수정하였습니다.
         barcode = barcode_Data;
-        Serial.print("barcode value is now: ");
-        Serial.println(barcode);
-        Serial.print("barcode length is: ");
-        Serial.println(barcode.length());
+
+        send_HW_Serial();
+
     }
   }  
+}
+
+void send_HW_Serial() {
+
+  char barcode_char = barcode.charAt(0); // String을 char로 변환합니다. 
+  Serial.write(barcode_char);
+  Serial.flush();
+
 }
 
 
@@ -130,11 +138,11 @@ void Get_QR_Code_Landing_Point() {
   scanBarcode();
 
   // Check the barcode value and set tempCommand accordingly
-  if(barcode == "9999") {
+  if(barcode == "a") {
       tempCommand = 100;
       barcode = "";
   }
-  else if(barcode == "8888") {
+  else if(barcode == "b") {
       tempCommand = 200;
       barcode = "";
   }
@@ -143,17 +151,23 @@ void Get_QR_Code_Landing_Point() {
   }
 }
 
+//부저음 울리기
 void landing() {
-  //부저음 울리기
+
+  digitalWrite(piezo, HIGH);
+  delay(1000);
+  digitalWrite(piezo, LOW);
+  delay(1000);
+   
 }
 
-void turn_ninty() {
+void turn_Corner() {
   if(i==0) {
       Get_QR_Code_Landing_Point();
 
       if(tempCommand == 100){ //우회전 하는 코드
         right_angle();
-        delay(2000);
+        delay(1500);
         forword();
         delay(100); 
       }
@@ -173,20 +187,12 @@ void turn_ninty() {
   else if(i==1) {
       landing();
 
-      if(tempCommand == 100){ //우회전 하는 코드
-        right_angle();
-        delay(2000);
-        forword(); 
-        delay(100);
-      }
-
-      else if(tempCommand == 200){ //좌회전 하는 코드
-        left_angle();
-        delay(2000);
-        forword();
-        delay(100);
-      }
+      // landing지점 벗어나기
+      forword();
+      delay(100);
+      
       i=0;
+
       read_sensor_values();
       return;
   }
@@ -216,8 +222,8 @@ void loop(){
     }
 
   if(Command == 5){
-      Serial.println("command4");
+      Serial.println("command5");
       Stop();
-      turn_ninty();
+      turn_Corner();
     }
 }
