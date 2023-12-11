@@ -50,8 +50,8 @@ void setup(){ // put your setup code here, to run once
 
   pinMode(piezo, OUTPUT);
 
-  analogWrite(enA, 140); // 모터 세기 조절
-  analogWrite(enB, 140); // 모터 세기 조절
+  analogWrite(enA, 160); // 모터 세기 조절
+  analogWrite(enB, 160); // 모터 세기 조절
 }
 
 void forword(){  //forword
@@ -181,14 +181,14 @@ void turn_Corner() {
 
       if(tempCommand == 100){ //우회전 하는 코드
         right_angle();
-        delay(1800);
+        delay(2200);
         forword();
         delay(100); 
       }
 
       else if(tempCommand == 200){ //좌회전 하는 코드
         left_angle();
-        delay(1800);
+        delay(2200);
         forword();
         delay(100);
       }  
@@ -206,7 +206,7 @@ void turn_Corner() {
       delay(100);
       
       i=0;
-
+      barcode = "";
       read_sensor_values();
       return;
   }
@@ -227,7 +227,7 @@ void Ultrasonic_Waves() {
   Serial.println(distance);
   
   if (distance < safeDistance) {
-    Command = 4;
+    Command = 4;     
   }
 
 }
@@ -254,7 +254,7 @@ void loop(){
 
   if(Command == 4){
     Stop();
-    barcode = "";
+    
     Serial.println("command4");
     }
 
